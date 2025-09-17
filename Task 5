@@ -1,0 +1,59 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import folium
+
+# Load accident dataset
+df = pd.read_csv('traffic_accidents.csv')  # Your dataset must include columns like: Latitude, Longitude, Weather, Time, Road_Condition, etc.
+
+# Show basic info
+print(df.head())
+
+# --- DATA PREPROCESSING ---
+
+# Convert time column to datetime (if needed)
+df['Time'] = pd.to_datetime(df['Time'], errors='coerce')
+df['Hour'] = df['Time'].dt.hour
+
+# Drop rows with missing location info
+df.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+
+# --- VISUALIZATION 1: ACCIDENT HOTSPOTS ON MAP ---
+m = folium.Map(location=[df['Latitude'].mean(), df['Longitude'].mean()], zoom_start=10)
+for _, row in df.iterrows():
+    folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=2,
+        color='red',
+        fill=True,
+        fill_opacity=0.5
+    ).add_to(m)
+m.save("accident_hotspots_map.html")
+print("✔️ Accident hotspot map saved as 'accident_hotspots_map.html'")
+
+# --- VISUALIZATION 2: ACCIDENTS BY TIME OF DAY ---
+plt.figure(figsize=(10, 5))
+sns.countplot(x='Hour', data=df, palette='mako')
+plt.title("🚗 Number of Accidents by Hour of the Day")
+plt.xlabel("Hour")
+plt.ylabel("Accident Count")
+plt.tight_layout()
+plt.show()
+
+# --- VISUALIZATION 3: WEATHER CONDITIONS ---
+plt.figure(figsize=(8, 5))
+sns.countplot(y='Weather', data=df, order=df['Weather'].value_counts().index, palette='coolwarm')
+plt.title("☁️ Accidents by Weather Condition")
+plt.xlabel("Count")
+plt.ylabel("Weather")
+plt.tight_layout()
+plt.show()
+
+# --- VISUALIZATION 4: ROAD CONDITIONS ---
+plt.figure(figsize=(8, 5))
+sns.countplot(y='Road_Condition', data=df, order=df['Road_Condition'].value_counts().index, palette='Set2')
+plt.title("🛣️ Accidents by Road Condition")
+plt.xlabel("Count")
+plt.ylabel("Road Condition")
+plt.tight_layout()
+plt.show()
