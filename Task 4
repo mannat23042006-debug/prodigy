@@ -1,0 +1,57 @@
+# Step 1: Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from wordcloud import WordCloud
+from textblob import TextBlob
+
+# Step 2: Load a sample social media dataset
+# (If you're using your own dataset, replace this path)
+df = pd.read_csv("twitter_sample_data.csv")  # Assumes 'text' column exists
+
+# Step 3: Basic preprocessing
+df.dropna(subset=['text'], inplace=True)  # Remove missing tweets
+
+# Step 4: Sentiment analysis using TextBlob
+def get_sentiment(text):
+    analysis = TextBlob(text)
+    if analysis.sentiment.polarity > 0:
+        return 'Positive'
+    elif analysis.sentiment.polarity < 0:
+        return 'Negative'
+    else:
+        return 'Neutral'
+
+df['Sentiment'] = df['text'].apply(get_sentiment)
+
+# Step 5: Count and display sentiment distribution
+sentiment_counts = df['Sentiment'].value_counts()
+print("Sentiment Distribution:")
+print(sentiment_counts)
+
+# Step 6: Visualization - Sentiment Pie Chart
+plt.figure(figsize=(6,6))
+sentiment_counts.plot.pie(autopct='%1.1f%%', colors=['lightgreen', 'lightcoral', 'lightblue'])
+plt.title('Sentiment Distribution')
+plt.ylabel('')
+plt.show()
+
+# Step 7: WordCloud for positive and negative tweets
+positive_text = " ".join(df[df['Sentiment'] == 'Positive']['text'])
+negative_text = " ".join(df[df['Sentiment'] == 'Negative']['text'])
+
+# Positive WordCloud
+wordcloud_pos = WordCloud(width=800, height=400, background_color='white').generate(positive_text)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud_pos, interpolation='bilinear')
+plt.axis('off')
+plt.title("Positive Tweets WordCloud")
+plt.show()
+
+# Negative WordCloud
+wordcloud_neg = WordCloud(width=800, height=400, background_color='white').generate(negative_text)
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud_neg, interpolation='bilinear')
+plt.axis('off')
+plt.title("Negative Tweets WordCloud")
+plt.show()
