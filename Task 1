@@ -1,0 +1,32 @@
+
+# Task 1 
+# Bar Chart: Distribution of Population in Top 10 Most Populated Countries (2022)
+# Sample dataset reference: https://data.worldbank.org/indicator/SP.POP.TOTL
+
+import matplotlib.pyplot as plt
+
+# Country names (Top 10 by population in 2022)
+countries = ['China', 'India', 'USA', 'Indonesia', 'Pakistan', 
+             'Nigeria', 'Brazil', 'Bangladesh', 'Russia', 'Mexico']
+
+# Population values in billions (converted for clear scale)
+populations_in_billions = [1.412, 1.408, 0.337, 0.275, 0.235, 
+                           0.218, 0.214, 0.171, 0.144, 0.126]
+
+# Create the bar chart
+plt.figure(figsize=(12, 6))
+plt.bar(countries, populations_in_billions, color='steelblue')
+
+# Add labels and title
+plt.xlabel('Country')
+plt.ylabel('Population (in billions)')
+plt.title('Top 10 Most Populated Countries (2022)')
+
+# Rotate x-axis labels for better readability
+plt.xticks(rotation=45)
+
+# Auto-adjust layout
+plt.tight_layout()
+
+# Show the chart
+plt.show()
